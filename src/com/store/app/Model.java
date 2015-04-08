@@ -11,7 +11,7 @@ public class Model {
     private static Model instance = null; 
 //  assign instance to null
 
-    public static synchronized Model getInstance() {
+    public static synchronized Model getInstance() throws DataAccessException {
         if (instance == null) {
             instance = new Model();
         }
@@ -25,7 +25,7 @@ public class Model {
     StoreTableGateway storeGateway;
     private List<Region> regions;
     RegionTableGateway regionGateway;    
-    private Model() {
+    private Model() throws DataAccessException {
 //trys to make a connection to the db if not sql exception
         try {
             Connection conn = DBConnection.getInstance();
@@ -36,7 +36,7 @@ public class Model {
             this.regions = this.regionGateway.getRegions();
         } 
         catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exception initialising Model object: " + ex.getMessage());
         }
     }
 
@@ -45,9 +45,9 @@ public class Model {
         return this.stores;
     }
 
-    public boolean addStore(Store s) throws SQLException {
+    public boolean addStore(Store s) throws DataAccessException {
         boolean result = false;
-
+        try{
             int storeId = this.storeGateway.insertStore(
                 s.getaddress(),
                 s.getmanager(),
@@ -58,13 +58,15 @@ public class Model {
                this.stores.add(s);
                result = true;
             }
-
-
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Exception adding store: " + ex.getMessage());
+        }
         return result;
     }
 
     
-    public boolean removeStore(Store s) {
+    public boolean removeStore(Store s) throws DataAccessException {
         boolean removed = false;
         try{
             removed = this.storeGateway.removeStore(s.getstoreId());
@@ -72,8 +74,8 @@ public class Model {
                 removed = this.stores.remove(s);
             }
         }
-         catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        catch (SQLException ex) {
+            throw new DataAccessException("Exception removing a store: " + ex.getMessage());
         }
         return removed;
     }    
@@ -97,15 +99,15 @@ public class Model {
         return s;
     }
 
-    boolean updateStore(Store s) {
+    boolean updateStore(Store s) throws DataAccessException {
         boolean updated = false;
         
         try{
             updated = this.storeGateway.updateStore(s);
 
         }
-         catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        catch (SQLException ex) {
+            throw new DataAccessException("Exception updating store: " + ex.getMessage());
         }
         return updated;
     }
@@ -115,9 +117,9 @@ public class Model {
         return this.regions;
     }
 
-    public boolean addRegion(Region r) throws SQLException {
+    public boolean addRegion(Region r) throws DataAccessException {
         boolean result = false;
-
+        try{
             int regionId = this.regionGateway.insertRegion(
                 r.getregion(),                    
                 r.getmanagerName(),
@@ -129,13 +131,15 @@ public class Model {
                this.regions.add(r);
                result = true;
             }
-
-
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Exception adding region: " + ex.getMessage());
+        }
         return result;
     }
 
     
-    public boolean removeRegion(Region r) {
+    public boolean removeRegion(Region r) throws DataAccessException {
         boolean removed = false;
         try{
             removed = this.regionGateway.removeRegion(r.getregionId());
@@ -143,8 +147,8 @@ public class Model {
                 removed = this.regions.remove(r);
             }
         }
-         catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        catch (SQLException ex) {
+            throw new DataAccessException("Exception deleting region: " + ex.getMessage());
         }
         return removed;
     }    
@@ -168,15 +172,15 @@ public class Model {
         return r;
     }
 
-    boolean updateRegion(Region r) {
+    boolean updateRegion(Region r) throws DataAccessException {
         boolean updated = false;
         
         try{
             updated = this.regionGateway.updateRegion(r);
 
         }
-         catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        catch (SQLException ex) {
+            throw new DataAccessException("Exception updating region: " + ex.getMessage());
         }
         return updated;
     }

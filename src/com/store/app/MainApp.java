@@ -16,81 +16,87 @@ import java.util.Scanner;
  */
 public class MainApp {
 //  main metheod start     
-    public static void main (String[] args) throws SQLException {
+    public static void main (String[] args){
     Scanner keyboard = new Scanner(System.in);
-    Model model = Model.getInstance();
-        int opt;
+    Model model;
+        int opt =9;
 //      opt int used for switch value
 //      do loop which run while opt does not equal 5
         do {
-            System.out.println("1. Create new Store");
-            System.out.println("2. Delete existing Store");
-            System.out.println("3. View all Store");
-            System.out.println("4. Edit Store");
-            System.out.println();            
-            System.out.println("5. Create new Region");
-            System.out.println("6. Delete existing Region");
-            System.out.println("7. View all Region");
-            System.out.println("8. Edit Region");
-            System.out.println();            
-            System.out.println("9. Exit");
-            System.out.println();
+            try{
+                model = Model.getInstance();
+                System.out.println("1. Create new Store");
+                System.out.println("2. Delete existing Store");
+                System.out.println("3. View all Store");
+                System.out.println("4. Edit Store");
+                System.out.println();            
+                System.out.println("5. Create new Region");
+                System.out.println("6. Delete existing Region");
+                System.out.println("7. View all Region");
+                System.out.println("8. Edit Region");
+                System.out.println();            
+                System.out.println("9. Exit");
+                System.out.println();
 
-            System.out.print("Enter option: ");
-            String line = keyboard.nextLine();
-            opt = Integer.parseInt(line);
+                opt = getInt(keyboard, "Enter option: ", 12);
 
-            System.out.println("You chose option " + opt);
-            
-            switch (opt) {
-                case 1: { 
-                    System.out.println("Creating Store");
-                    createStore(keyboard, model);
-                    break;
+                System.out.println("You chose option " + opt);
+
+                switch (opt) {
+                    case 1: { 
+                        System.out.println("Creating Store");
+                        createStore(keyboard, model);
+                        break;
+                    }
+                    case 2: {
+                        System.out.println("Deleting Store");
+                        deleteStore(keyboard, model);
+                     break;
+                    }
+                    case 3: {
+                        System.out.println("Viewing Stores");
+                        viewStores(model);
+                        break;
+                    }
+                    case 4: {
+                        System.out.println("Edit Stores");
+                        editStores(keyboard, model);
+                        break;
+                    }  
+                    case 5: { 
+                        System.out.println("Creating Region");
+                        createRegion(keyboard, model);
+                        break;
+                    }
+                    case 6: {
+                        System.out.println("Deleting Region");
+                        deleteRegion(keyboard, model);
+                     break;
+                    }
+                    case 7: {
+                        System.out.println("Viewing Regions");
+                        viewRegions(model);
+                        break;
+                    }
+                    case 8: {
+                        System.out.println("Edit Regions");
+                        editRegion(keyboard, model);
+                        break;
+                    }                 
                 }
-                case 2: {
-                    System.out.println("Deleting Store");
-                    deleteStore(keyboard, model);
-                 break;
-                }
-                case 3: {
-                    System.out.println("Viewing Stores");
-                    viewStores(model);
-                    break;
-                }
-                case 4: {
-                    System.out.println("Edit Stores");
-                    editStores(keyboard, model);
-                    break;
-                }  
-                case 5: { 
-                    System.out.println("Creating Region");
-                    createRegion(keyboard, model);
-                    break;
-                }
-                case 6: {
-                    System.out.println("Deleting Region");
-                    deleteRegion(keyboard, model);
-                 break;
-                }
-                case 7: {
-                    System.out.println("Viewing Regions");
-                    viewRegions(model);
-                    break;
-                }
-                case 8: {
-                    System.out.println("Edit Regions");
-                    editRegion(keyboard, model);
-                    break;
-                }                 
             }
+            catch (DataAccessException e) {
+                System.out.println();
+                System.out.println(e.getMessage());
+                System.out.println();
+            }            
         }
         while (opt != 9);
         System.out.println("Goodbye");
     } 
     
 //start of create store method
-    private static void createStore(Scanner keyboard, Model model) throws SQLException  {   
+    private static void createStore(Scanner keyboard, Model model) throws DataAccessException  {   
         Store s = readStore(keyboard);
         if (model.addStore(s)){
             System.out.println("Store added to database");
@@ -107,12 +113,10 @@ public class MainApp {
     private static Store readStore(Scanner keyb) {
         String address, manager;
         int phoneNumber;
-        String line;
 
         address = getString(keyb, "Enter Address of store: ");
         manager = getString(keyb, "Enter Store Manager: ");
-        line = getString(keyb, "Enter phone number: ");
-        phoneNumber = Integer.parseInt(line);
+        phoneNumber = getInt(keyb, "Enter phone number: ", 0);
 
 
         Store s = new Store(address, manager, phoneNumber);
@@ -131,9 +135,10 @@ public class MainApp {
        else{
            System.out.printf("%5s %5s %40s %40s %10s\n", "Id", "Region","Address", "Manager", "Phone Number" );
            for(Store st :stores){
-               System.out.printf("%5d %5d %40s %40s %10d\n",
+               Region r = mdl.findRegionById(st.getregionId());
+               System.out.printf("%5d %20s %40s %40s %10d\n",
                        st.getstoreId(),
-                       st.getregionId(),
+                       (r != null) ? r.getregion() : "",
                        st.getaddress(),
                        st.getmanager(),
                        st.getphoneNumber());
@@ -144,9 +149,8 @@ public class MainApp {
 //end of view store method 
     
 //start of delete store method
-    private static void deleteStore(Scanner keyboard, Model model) {
-        System.out.print("Enter the store to delete:");     
-        int storeId = Integer.parseInt(keyboard.nextLine());
+    private static void deleteStore(Scanner keyboard, Model model) throws DataAccessException {
+        int storeId = getInt (keyboard, "Enter the store to delete:", -1);
         Store s;
 //      takes in the value for S_Id then uses it for the method 
 
@@ -164,9 +168,9 @@ public class MainApp {
 //end of delete store method     
 
 //start of edit store method      
-    private static void editStores(Scanner kb, Model m) {
-        System.out.print("Enter the store to edit:");   
-        int storeId = Integer.parseInt(kb.nextLine());
+    private static void editStores(Scanner kb, Model m) throws DataAccessException {
+        int storeId = getInt (kb, "Enter the store to edit:", -1);
+
         Store s;
 //      takes in the value for S_Id then uses it for the metheod        
 
@@ -194,12 +198,11 @@ public class MainApp {
     private static void editStoreDetails(Scanner keyb, Store s) {
         String address, manager;
         int phoneNumber;
-        String line;
 
         address = getString(keyb, "Enter Address of store [" + s.getaddress() + "]: ");
 //      gets the users input using the keyboard value using getString and shows the current value for address
         manager = getString(keyb, "Enter Store Manager ["+ s.getmanager() + "]: ");
-        line = getString(keyb, "Enter phone number ["+ s.getphoneNumber() + "]: ");
+        phoneNumber = getInt(keyb, "Enter phone number ["+ s.getphoneNumber() + "]: ", 0);
         
         if (address.length() != 0){
             s.setaddress(address);
@@ -211,8 +214,7 @@ public class MainApp {
             s.setmanager(manager);
         }   
         
-        if (line.length() != 0){
-            phoneNumber = Integer.parseInt(line);
+        if (phoneNumber != 0){
             s.setphoneNumber(phoneNumber);
         }        
     }
@@ -220,7 +222,7 @@ public class MainApp {
 
     
 //start of create region method
-    private static void createRegion(Scanner keyboard, Model model) throws SQLException  {   
+    private static void createRegion(Scanner keyboard, Model model) throws DataAccessException  {   
         Region r = readRegion(keyboard);
         if (model.addRegion(r)){
             System.out.println("Region added to database");
@@ -237,12 +239,10 @@ public class MainApp {
     private static Region readRegion(Scanner keyb) {
         String region, managerName, email;
         int phoneNumber;
-        String line;
 
         region = getString(keyb, "Enter name of Region: ");
         managerName = getString(keyb, "Enter Region Managers Name: ");
-        line = getString(keyb, "Enter phone number: ");
-        phoneNumber = Integer.parseInt(line);
+        phoneNumber = getInt(keyb, "Enter phone number: ", 0);
         email = getString(keyb, "Enter email of Manager: ");
 
         Region r = new Region(region, managerName, phoneNumber, email);
@@ -275,9 +275,8 @@ public class MainApp {
 //end of view region method 
     
 //start of delete region method
-    private static void deleteRegion(Scanner keyboard, Model model) {
-        System.out.print("Enter the region to delete:");     
-        int regionId = Integer.parseInt(keyboard.nextLine());
+    private static void deleteRegion(Scanner keyboard, Model model) throws DataAccessException {
+        int regionId = getInt (keyboard, "Enter the region to delete:", -1);
         Region r;
 //      takes in the value for S_Id then uses it for the method 
 
@@ -295,9 +294,8 @@ public class MainApp {
 //end of delete region method     
 
 //start of edit region method      
-    private static void editRegion(Scanner kb, Model m) {
-        System.out.print("Enter the region to edit:");   
-        int regionId = Integer.parseInt(kb.nextLine());
+    private static void editRegion(Scanner kb, Model m) throws DataAccessException {
+        int regionId = getInt (kb, "Enter the region to edit:", -1);
         Region r;
 //      takes in the value for S_Id then uses it for the metheod        
 
@@ -332,12 +330,11 @@ public class MainApp {
     private static void editRegionDetails(Scanner keyb, Region r) {
         String region, managerName, email;
         int phoneNumber;
-        String line;
 
         region = getString(keyb, "Enter name of Region [" + r.getregion() + "]: ");
 //      gets the users input using the keyboard value using getString and shows the current value for address
         managerName = getString(keyb, "Enter Region Managers name ["+ r.getmanagerName() + "]: ");
-        line = getString(keyb, "Enter phone number ["+ r.getphoneNumber() + "]: ");
+        phoneNumber = getInt(keyb, "Enter phone number ["+ r.getphoneNumber() + "]: ", 0);
         email = getString(keyb, "Enter email ["+ r.getemail() + "]: ");        
         
         if (region.length() != 0){
@@ -350,8 +347,7 @@ public class MainApp {
             r.setmanagerName(managerName);
         }   
         
-        if (line.length() != 0){
-            phoneNumber = Integer.parseInt(line);
+        if (phoneNumber!= 0){
             r.setphoneNumber(phoneNumber);
         }
         if (email.length() != 0){
@@ -368,6 +364,28 @@ public class MainApp {
     }
 //end of get string method    
     
+
+    private static int getInt(Scanner keyb, String prompt, int defaultValue) {
+        int opt = defaultValue;
+        boolean finished = false;
+
+        do {
+            try {
+                System.out.print(prompt);
+                String line = keyb.nextLine();
+                if (line.length() > 0) {
+                    opt = Integer.parseInt(line);
+                }
+                finished = true;
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Exception: " + e.getMessage());
+            }
+        }
+        while (!finished);
+
+        return opt;
+    }
 
     
 }

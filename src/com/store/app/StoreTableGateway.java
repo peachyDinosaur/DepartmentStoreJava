@@ -66,9 +66,9 @@ public class StoreTableGateway {
                             // SQL query 
         List<Store> stores;   // the java.util.List containing the Store objects
                             // created for each row in the result of the query
-        int s_id, r_id;             // the id of a store
-        String address, s_manager;
-        int p_number;
+        int storeId, regionId;             // the id of a store
+        String address, manager;
+        int phoneNumber;
         Store s;       // a Store object created from a row in the result of
                             // the query
 
@@ -83,19 +83,19 @@ public class StoreTableGateway {
         // empty ArrayList
         stores = new ArrayList<Store>();
         while (rs.next()) {
-            s_id = rs.getInt(COLUMN_STOREID);
-            r_id = rs.getInt(COLUMN_REGIONID);
+            storeId = rs.getInt(COLUMN_STOREID);
+            regionId = rs.getInt(COLUMN_REGIONID);
             address = rs.getString(COLUMN_ADDRESS);
-            s_manager = rs.getString(COLUMN_MANAGER);            
-            p_number = rs.getInt(COLUMN_PHONENUMBER);
+            manager = rs.getString(COLUMN_MANAGER);            
+            phoneNumber = rs.getInt(COLUMN_PHONENUMBER);
 
-            s = new Store(s_id, r_id, address, s_manager, p_number);
+            s = new Store(storeId, regionId, address, manager, phoneNumber);
             stores.add(s);
         }
 
         return stores;
     }
-     public boolean removeStore(int S_Id)throws SQLException{
+     public boolean removeStore(int storeId)throws SQLException{
          
         PreparedStatement stmt;
         int numRowsAffected;
@@ -103,7 +103,7 @@ public class StoreTableGateway {
         query = "DELETE FROM " + TABLE_NAME +" WHERE " + COLUMN_STOREID + " = ?";
 
         stmt = mConnection.prepareStatement(query);
-        stmt.setInt(1, S_Id);
+        stmt.setInt(1, storeId);
         
         numRowsAffected = stmt.executeUpdate();
         
