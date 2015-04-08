@@ -27,7 +27,13 @@ public class MainApp {
             System.out.println("2. Delete existing Store");
             System.out.println("3. View all Store");
             System.out.println("4. Edit Store");
-            System.out.println("5. Exit");
+            System.out.println();            
+            System.out.println("5. Create new Region");
+            System.out.println("6. Delete existing Region");
+            System.out.println("7. View all Region");
+            System.out.println("8. Edit Region");
+            System.out.println();            
+            System.out.println("9. Exit");
             System.out.println();
 
             System.out.print("Enter option: ");
@@ -56,10 +62,30 @@ public class MainApp {
                     System.out.println("Edit Stores");
                     editStores(keyboard, model);
                     break;
-                }                
+                }  
+                case 5: { 
+                    System.out.println("Creating Region");
+                    createRegion(keyboard, model);
+                    break;
+                }
+                case 6: {
+                    System.out.println("Deleting Region");
+                    deleteRegion(keyboard, model);
+                 break;
+                }
+                case 7: {
+                    System.out.println("Viewing Regions");
+                    viewRegions(model);
+                    break;
+                }
+                case 8: {
+                    System.out.println("Edit Regions");
+                    editRegion(keyboard, model);
+                    break;
+                }                 
             }
         }
-        while (opt != 5);
+        while (opt != 9);
         System.out.println("Goodbye");
     } 
     
@@ -191,7 +217,149 @@ public class MainApp {
         }        
     }
 //end of edit store details  method  
+
     
+//start of create region method
+    private static void createRegion(Scanner keyboard, Model model) throws SQLException  {   
+        Region r = readRegion(keyboard);
+        if (model.addRegion(r)){
+            System.out.println("Region added to database");
+        }
+        else{
+            System.out.println("Region not added to database");
+            System.out.println();
+        }    
+
+    }  
+//end of create region method      
+
+//start of insert region method     
+    private static Region readRegion(Scanner keyb) {
+        String region, managerName, email;
+        int phoneNumber;
+        String line;
+
+        region = getString(keyb, "Enter name of Region: ");
+        managerName = getString(keyb, "Enter Region Managers Name: ");
+        line = getString(keyb, "Enter phone number: ");
+        phoneNumber = Integer.parseInt(line);
+        email = getString(keyb, "Enter email of Manager: ");
+
+        Region r = new Region(region, managerName, phoneNumber, email);
+        
+        return r;
+    }
+//end of insert region  
+    
+//view regions metheod
+    private static void viewRegions(Model mdl) {
+       List<Region> regions = mdl.getRegions();
+       System.out.println();
+       if(regions.isEmpty()){
+           System.out.println("There are no Regions in the database");
+           System.out.println();
+       }
+       else{
+           System.out.printf("%5s %20s %40s %15s %20s\n", "regionId", "Region","Manager", "Phone Number", "email" );
+           for(Region st :regions){
+               System.out.printf("%5d %20s %40s %15d %20s\n",
+                       st.getregionId(),
+                       st.getregion(),                       
+                       st.getmanagerName(),
+                       st.getphoneNumber(),
+                       st.getemail());
+           }
+       }
+                    System.out.println();
+    }
+//end of view region method 
+    
+//start of delete region method
+    private static void deleteRegion(Scanner keyboard, Model model) {
+        System.out.print("Enter the region to delete:");     
+        int regionId = Integer.parseInt(keyboard.nextLine());
+        Region r;
+//      takes in the value for S_Id then uses it for the method 
+
+        r = model.findRegionById(regionId);
+        if (r != null) {
+            if (model.removeRegion(r)) {
+                System.out.println("Region deleted");
+            } else {
+                System.out.println("Region not deleted");
+            }
+        } else {
+            System.out.println("Region not found");
+        }
+    }
+//end of delete region method     
+
+//start of edit region method      
+    private static void editRegion(Scanner kb, Model m) {
+        System.out.print("Enter the region to edit:");   
+        int regionId = Integer.parseInt(kb.nextLine());
+        Region r;
+//      takes in the value for S_Id then uses it for the metheod        
+
+        r = m.findRegionById(regionId);
+        if (r != null) {
+//      if regions result doesnn't equal 0 
+            editRegionDetails(kb, r);
+            if (m.updateRegion(r)) {
+//          update the region using s as a value to be updated
+                System.out.println(); 
+                System.out.println("Region updated");
+                System.out.println(); 
+
+            } else {
+                System.out.println(); 
+                System.out.println("Region not updated");
+                System.out.println(); 
+//                if for some reason there is an error 
+            }
+        } else {
+            System.out.println(); 
+            System.out.println("Region not found");
+            System.out.println(); 
+//          if region is equal to 0 region does not exist
+        }
+
+    }
+//end of edit region method     
+    
+
+//start of edit details region method  
+    private static void editRegionDetails(Scanner keyb, Region r) {
+        String region, managerName, email;
+        int phoneNumber;
+        String line;
+
+        region = getString(keyb, "Enter name of Region [" + r.getregion() + "]: ");
+//      gets the users input using the keyboard value using getString and shows the current value for address
+        managerName = getString(keyb, "Enter Region Managers name ["+ r.getmanagerName() + "]: ");
+        line = getString(keyb, "Enter phone number ["+ r.getphoneNumber() + "]: ");
+        email = getString(keyb, "Enter email ["+ r.getemail() + "]: ");        
+        
+        if (region.length() != 0){
+            r.setregion(region);
+//      if the user enters a value that value will be the new set value
+//      this is thanks to the setaddress fuction in the region class    
+        }
+        
+        if (managerName.length() != 0){
+            r.setmanagerName(managerName);
+        }   
+        
+        if (line.length() != 0){
+            phoneNumber = Integer.parseInt(line);
+            r.setphoneNumber(phoneNumber);
+        }
+        if (email.length() != 0){
+            r.setemail(email);
+        }         
+    }
+//end of edit region details  method  
+     
     
 //start of get string method      
     private static String getString(Scanner keyboard, String prompt) {

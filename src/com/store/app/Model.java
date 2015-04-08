@@ -22,14 +22,18 @@ public class Model {
     
 //creating a list of the stores based on the databases values     
     private List<Store> stores;
-    StoreTableGateway gateway;
+    StoreTableGateway storeGateway;
+    private List<Region> regions;
+    RegionTableGateway regionGateway;    
     private Model() {
 //trys to make a connection to the db if not sql exception
         try {
             Connection conn = DBConnection.getInstance();
-            this.gateway = new StoreTableGateway(conn);
+            this.storeGateway = new StoreTableGateway(conn);
+            this.regionGateway = new RegionTableGateway(conn);
             
-            this.stores = this.gateway.getStores();
+            this.stores = this.storeGateway.getStores();
+            this.regions = this.regionGateway.getRegions();
         } 
         catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
@@ -44,7 +48,7 @@ public class Model {
     public boolean addStore(Store s) throws SQLException {
         boolean result = false;
 
-            int storeId = this.gateway.insertStore(
+            int storeId = this.storeGateway.insertStore(
                 s.getaddress(),
                 s.getmanager(),
                 s.getphoneNumber());
@@ -63,7 +67,7 @@ public class Model {
     public boolean removeStore(Store s) {
         boolean removed = false;
         try{
-            removed = this.gateway.removeStore(s.getstoreId());
+            removed = this.storeGateway.removeStore(s.getstoreId());
             if(removed){
                 removed = this.stores.remove(s);
             }
@@ -97,7 +101,7 @@ public class Model {
         boolean updated = false;
         
         try{
-            updated = this.gateway.updateStore(s);
+            updated = this.storeGateway.updateStore(s);
 
         }
          catch (SQLException ex) {
@@ -106,6 +110,76 @@ public class Model {
         return updated;
     }
 
+
+    public List<Region> getRegions() {
+        return this.regions;
+    }
+
+    public boolean addRegion(Region r) throws SQLException {
+        boolean result = false;
+
+            int regionId = this.regionGateway.insertRegion(
+                r.getregion(),                    
+                r.getmanagerName(),
+                r.getphoneNumber(),
+                r.getemail());
+            
+            if(regionId != -1){
+               r.setregionId(regionId);
+               this.regions.add(r);
+               result = true;
+            }
+
+
+        return result;
+    }
+
+    
+    public boolean removeRegion(Region r) {
+        boolean removed = false;
+        try{
+            removed = this.regionGateway.removeRegion(r.getregionId());
+            if(removed){
+                removed = this.regions.remove(r);
+            }
+        }
+         catch (SQLException ex) {
+            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return removed;
+    }    
+       
+
+    Region findRegionById(int regionId) {
+        Region r = null;
+        int i = 0;
+        boolean found = false;
+        while (i < this.regions.size() && !found) {
+            r = this.regions.get(i);
+            if (r.getregionId() == (regionId)) {
+                found = true;
+            } else {
+                i++;
+            }
+        }
+        if (!found) {
+            r = null;
+        }
+        return r;
+    }
+
+    boolean updateRegion(Region r) {
+        boolean updated = false;
+        
+        try{
+            updated = this.regionGateway.updateRegion(r);
+
+        }
+         catch (SQLException ex) {
+            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return updated;
+    }
 
 
 }
