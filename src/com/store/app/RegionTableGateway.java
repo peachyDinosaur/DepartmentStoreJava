@@ -123,18 +123,18 @@ public class RegionTableGateway {
         int numRowsAffected;
         
         query = "UPDATE " + TABLE_NAME + " SET " +
-                COLUMN_REGION      + " =?, " +
-                COLUMN_MANAGERNAME    + " =?, " +
-                COLUMN_PHONENUMBER     +  " =? " +
-                COLUMN_EMAIL     +  " =? " +
+                COLUMN_REGION           + " =?, " +
+                COLUMN_MANAGERNAME      + " =?, " +
+                COLUMN_PHONENUMBER      +  " =?, " +
+                COLUMN_EMAIL            +  " =? " +
                 " WHERE " + COLUMN_REGIONID + " =?";
         
         stmt = mConnection.prepareStatement(query);
-        stmt.setString(1, r.getregion());
-        stmt.setString(2, r.getmanagerName());
-        stmt.setInt(3, r.getphoneNumber());
-        stmt.setString(4, r.getemail());
-        stmt.setInt(5, r.getregionId());
+        stmt.setString  (1, r.getregion());
+        stmt.setString  (2, r.getmanagerName());
+        stmt.setInt     (3, r.getphoneNumber());
+        stmt.setString  (4, r.getemail());
+        stmt.setInt     (5, r.getregionId());
         
         numRowsAffected = stmt.executeUpdate();        
 

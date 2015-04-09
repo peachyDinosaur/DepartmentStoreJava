@@ -124,10 +124,10 @@ public class StoreTableGateway {
         int regionId;
         
         query = "UPDATE " + TABLE_NAME + " SET " +
-                COLUMN_REGIONID      + " =?, " +
-                COLUMN_ADDRESS      + " =?, " +
-                COLUMN_MANAGER    + " =?, " +
-                COLUMN_PHONENUMBER     +  " =? " +
+                COLUMN_REGIONID         + " =?, " +
+                COLUMN_ADDRESS          + " =?, " +
+                COLUMN_MANAGER          + " =?, " +
+                COLUMN_PHONENUMBER      +  " =? " +
                 " WHERE " + COLUMN_STOREID + " =?";
         
         stmt = mConnection.prepareStatement(query);
