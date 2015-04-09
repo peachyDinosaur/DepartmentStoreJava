@@ -15,18 +15,18 @@ public class Store {
     private int phoneNumber; 
 //  values of the tables in the database 
 
-    public Store(int storeId, int regionId, String a, String sM, int pN) {
-//        store object with parameters
+    public Store(int storeId, int regionId, String address, String managerName, int phoneNumber) {
+//      store object with parameters
         this.storeId = storeId;
         this.regionId = regionId;
-        this.address = a;
-        this.manager = sM;
-        this.phoneNumber = pN;
+        this.address = address;
+        this.manager = managerName;
+        this.phoneNumber = phoneNumber;
     }
 //  every store object has the value of the collumn asigned a value
 
-    public Store(String a, String sM, int pN) {
-        this(-1, 1, a, sM, pN );
+    public Store(int regionId, String address, String managerName, int phoneNumber) {
+        this(-1, regionId, address, managerName, phoneNumber );
     }    
 //  second store object which has S_Id as -1 & value of 1 for R_Id other values used from other store object 
     

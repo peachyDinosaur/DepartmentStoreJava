@@ -2,6 +2,7 @@ package com.store.app;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,11 +45,20 @@ public class Model {
     public List<Store> getStores() {
         return this.stores;
     }
-
+    public List<Store> getStoresByRegionId(int regionId) {
+        List<Store> list = new ArrayList<Store>();
+        for (Store s : this.stores) {
+            if (s.getregionId() == regionId) {
+                list.add(s);
+            }
+        }
+        return list;
+    }
     public boolean addStore(Store s) throws DataAccessException {
         boolean result = false;
         try{
             int storeId = this.storeGateway.insertStore(
+                s.getregionId(),    
                 s.getaddress(),
                 s.getmanager(),
                 s.getphoneNumber());

@@ -22,7 +22,7 @@ public class StoreTableGateway {
         mConnection = connection;
     }
     
-    public int insertStore(String a, String m, int pN) throws SQLException {
+    public int insertStore(int regionId, String address, String managerName, int phoneNumber) throws SQLException {
         int storeId = -1;
 
 
@@ -32,17 +32,24 @@ public class StoreTableGateway {
         String query;       // the SQL query to execute
         // the required SQL INSERT statement with place holders for the values to be inserted into the database
         query = "INSERT INTO " + TABLE_NAME + " (" +
+                COLUMN_REGIONID + ", " +
                 COLUMN_ADDRESS + ", " +
                 COLUMN_MANAGER + ", " +
                 COLUMN_PHONENUMBER +                
-                ") VALUES (?, ?, ?)";
+                ") VALUES (?, ?, ?, ?)";
 
         // create a PreparedStatement object to execute the query and insert the values into the query
         stmt = mConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-        stmt.setString(1, a);
-        stmt.setString(2, m);
-        stmt.setInt(3, pN);
-
+        if (regionId == -1) {
+            stmt.setNull(1, java.sql.Types.INTEGER);
+        }
+        else {
+            stmt.setInt(1, regionId);
+        } 
+        stmt.setString(2, address);
+        stmt.setString(3, managerName);
+        stmt.setInt(4, phoneNumber);
+        
 
         //  execute the query and make sure that one and only one row was inserted into the database
         numRowsAffected = stmt.executeUpdate();
@@ -114,18 +121,27 @@ public class StoreTableGateway {
         String query;
         PreparedStatement stmt;
         int numRowsAffected;
+        int regionId;
         
         query = "UPDATE " + TABLE_NAME + " SET " +
+                COLUMN_REGIONID      + " =?, " +
                 COLUMN_ADDRESS      + " =?, " +
                 COLUMN_MANAGER    + " =?, " +
                 COLUMN_PHONENUMBER     +  " =? " +
                 " WHERE " + COLUMN_STOREID + " =?";
         
         stmt = mConnection.prepareStatement(query);
-        stmt.setString(1, s.getaddress());
-        stmt.setString(2, s.getmanager());
-        stmt.setInt(3, s.getphoneNumber());
-        stmt.setInt(4, s.getstoreId());
+        regionId = s.getregionId();
+        if (regionId == -1) {
+            stmt.setNull(1, java.sql.Types.INTEGER);
+        }
+        else {
+            stmt.setInt(1, regionId);
+        }
+        stmt.setString(2, s.getaddress());
+        stmt.setString(3, s.getmanager());
+        stmt.setInt(4, s.getphoneNumber());
+        stmt.setInt(5, s.getstoreId());
         
         numRowsAffected = stmt.executeUpdate();        
 
