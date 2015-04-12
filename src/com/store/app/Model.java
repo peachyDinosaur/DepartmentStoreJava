@@ -45,7 +45,9 @@ public class Model {
     public List<Store> getStores() {
         return this.stores;
     }
-    public List<Store> getStoresByRegionId(int regionId) {
+    
+    
+    public List<Store> getStoresByRegionId(int regionId) { 
         List<Store> list = new ArrayList<Store>();
         for (Store s : this.stores) {
             if (s.getregionId() == regionId) {
@@ -54,6 +56,8 @@ public class Model {
         }
         return list;
     }
+    
+    
     public boolean addStore(Store s) throws DataAccessException {
         boolean result = false;
         try{

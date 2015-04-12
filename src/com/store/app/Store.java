@@ -6,7 +6,7 @@
 package com.store.app;
 
 
-public class Store {
+public class Store implements Comparable<Store> {
 
     private int storeId;
     private int regionId;
@@ -70,6 +70,14 @@ public class Store {
 
     public void setphoneNumber(int pN) {
         this.phoneNumber = pN;
+    }
+
+    @Override
+    public int compareTo(Store that) {
+        String myName = this.getaddress();
+        String yourName = that.getaddress();
+
+        return myName.compareTo(yourName);
     }
 
 }

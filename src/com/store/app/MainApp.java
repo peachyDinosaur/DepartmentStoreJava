@@ -6,6 +6,8 @@
 package com.store.app;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,11 +17,14 @@ import java.util.Scanner;
  * @author Elias
  */
 public class MainApp {
+    
+    private static final int NAME_ORDER = 1;
+
 //  main metheod start     
     public static void main (String[] args){
     Scanner keyboard = new Scanner(System.in);
     Model model;
-        int opt =9;
+        int opt =11;
 //      opt int used for switch value
 //      do loop which run while opt does not equal 5
         do {
@@ -28,19 +33,21 @@ public class MainApp {
                 System.out.println("1. Create new Store");
                 System.out.println("2. Delete existing Store");
                 System.out.println("3. View all Store");
-                System.out.println("4. View a single Store");
-                System.out.println("5. Edit Store");
+                System.out.println("4. View Store Alphabetical");
+                System.out.println("5. View a single Store");
+                System.out.println("6. Edit Store");
                 System.out.println();            
-                System.out.println("6. Create new Region");
-                System.out.println("7. Delete existing Region");
-                System.out.println("8. View all Region");
-                System.out.println("9. View a single Region");
-                System.out.println("10. Edit Region");
+                System.out.println("7. Create new Region");
+                System.out.println("8. Delete existing Region");
+                System.out.println("9. View all Region");
+                System.out.println("10. View a single Region");
+                System.out.println("11. Edit Region");
                 System.out.println();            
-                System.out.println("11. Exit");
+                System.out.println("12. Exit");
+                
                 System.out.println();
 
-                opt = getInt(keyboard, "Enter option: ", 11);
+                opt = getInt(keyboard, "Enter option: ", 13);
 
                 System.out.println("You chose option " + opt);
 
@@ -57,44 +64,50 @@ public class MainApp {
                     }
                     case 3: {
                         System.out.println("Viewing Stores");
-                        viewStores(model);
+                        viewStores(model, 0);
                         break;
                     }
                     case 4: {
+                        System.out.println("View Stores Alpha");
+                        viewStores(model, NAME_ORDER);
+                        break;
+                    }
+                    case 5: {
                         System.out.println("Viewing Store");
                         viewStore(keyboard, model);
                         break;
                     }                    
-                    case 5: {
+                    case 6: {
                         System.out.println("Edit Stores");
                         editStores(keyboard, model);
                         break;
                     }  
-                    case 6: { 
+                    case 7: { 
                         System.out.println("Creating Region");
                         createRegion(keyboard, model);
                         break;
                     }
-                    case 7: {
+                    case 8: {
                         System.out.println("Deleting Region");
                         deleteRegion(keyboard, model);
                      break;
                     }
-                    case 8: {
+                    case 9: {
                         System.out.println("Viewing Regions");
                         viewRegions(model);
                         break;
                     }
-                    case 9: {
+                    case 10: {
                         System.out.println("Viewing Region");
                         viewRegion(keyboard, model);
                         break;
                     }                    
-                    case 10: {
+                    case 11: {
                         System.out.println("Edit Regions");
                         editRegion(keyboard, model);
                         break;
-                    }                 
+                    }
+                                        
                 }
             }
             catch (DataAccessException e) {
@@ -103,7 +116,7 @@ public class MainApp {
                 System.out.println();
             }            
         }
-        while (opt != 11);
+        while (opt != 12);
         System.out.println("Goodbye");
     } 
     
@@ -142,16 +155,22 @@ public class MainApp {
 //end of insert store  
     
 //view stores metheod
-    private static void viewStores(Model mdl) {
+    private static void viewStores(Model mdl, int order) {
        List<Store> stores = mdl.getStores();
        System.out.println();
        if(stores.isEmpty()){
            System.out.println("There are no Stores in the database");
        }
        else{
+            if (order == NAME_ORDER) {
+                Collections.sort(stores);
+            }
+         
+           
+           
             dispayStores(stores, mdl);
        }
-                    System.out.println();
+       System.out.println();
     }
 //end of view stores method
     

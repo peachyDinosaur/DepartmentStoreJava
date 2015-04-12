@@ -71,12 +71,12 @@ public class RegionTableGateway {
                             // SQL query
         ResultSet rs;       // the java.sql.ResultSet representing the result of
                             // SQL query 
-        List<Region> regions;   // the java.util.List containing the Store objects
+        List<Region> regions;   // the java.util.List containing the Region objects
                             // created for each row in the result of the query
         int regionId;             // the id of a store
         String region, managerName, email;
         int phoneNumber;
-        Region r;       // a Store object created from a row in the result of
+        Region r;       // a Region object created from a row in the result of
                             // the query
 
         // execute an SQL SELECT statement to get a java.util.ResultSet representing
@@ -86,7 +86,7 @@ public class RegionTableGateway {
         rs = stmt.executeQuery(query);
 
         // iterate through the result set, extracting the data from each row
-        // and storing it in a Store object, which is inserted into an initially
+        // and storing it in a Region object, which is inserted into an initially
         // empty ArrayList
         regions = new ArrayList<Region>();
         while (rs.next()) {
